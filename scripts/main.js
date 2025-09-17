@@ -124,13 +124,15 @@ class HTMLExtractor {
         const styleNodes = doc.querySelectorAll('style');
         const scriptNodes = doc.querySelectorAll('script:not([src])');
 
-        let cssContent = Array.from(styleNodes).map(node => node.innerHTML).join('\n\n');
+        let cssContent = Array.from(styleNodes)
+            .map(node => this.dedent(node.innerHTML))
+            .join('\n\n/* --- Next Style Block --- */\n\n');
         styleNodes.forEach(node => node.remove());
 
         let jsContent = Array.from(scriptNodes)
             .filter(node => node.innerHTML.trim())
-            .map(node => node.innerHTML)
-            .join('\n\n');
+            .map(node => this.dedent(node.innerHTML))
+            .join('\n\n// --- Next Script Block ---\n\n');
         scriptNodes.forEach(node => node.remove());
 
         this.extracted.css = cssContent.trim();
@@ -164,6 +166,42 @@ class HTMLExtractor {
             styleBlocks: styleNodes.length,
             scriptBlocks: scriptNodes.length
         });
+    }
+
+    dedent(text) {
+        if (!text) return '';
+        const lines = text.split('\n');
+
+        let firstLineIndex = 0;
+        while (firstLineIndex < lines.length && lines[firstLineIndex].trim() === '') {
+            firstLineIndex++;
+        }
+
+        let lastLineIndex = lines.length - 1;
+        while (lastLineIndex >= firstLineIndex && lines[lastLineIndex].trim() === '') {
+            lastLineIndex--;
+        }
+
+        if (firstLineIndex > lastLineIndex) return '';
+
+        const relevantLines = lines.slice(firstLineIndex, lastLineIndex + 1);
+        if (relevantLines.length === 0) return '';
+
+        let minIndent = Infinity;
+        relevantLines.forEach(line => {
+            if (line.trim().length > 0) {
+                const indent = line.match(/^\s*/)[0].length;
+                if (indent < minIndent) {
+                    minIndent = indent;
+                }
+            }
+        });
+
+        if (minIndent === Infinity || minIndent === 0) {
+            return relevantLines.join('\n');
+        }
+
+        return relevantLines.map(line => line.substring(minIndent)).join('\n');
     }
 
     displayResults(stats) {
