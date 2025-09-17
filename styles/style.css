@@ -1,0 +1,63 @@
+/* ========================================================================================================
+   MAIN CONTENT
+=========================================================================================================== */
+.input-area {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.paste-area-container {
+    position: relative;
+}
+
+.paste-label {
+    position: absolute;
+    top: 15px;
+    left: 20px;
+    color: #aaa;
+    font-weight: 500;
+}
+
+.paste-area {
+    padding: 45px 20px 20px;
+}
+
+.bottom-controls {
+    padding-top: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+}
+
+.zip-download-group {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+#preview-frame {
+    width: 100%;
+    background: rgba(20, 20, 30, 0.8);
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    border-radius: 12px;
+    flex-grow: 1;
+    min-height: 400px;
+}
+
+.horizontal-line {
+    border-top: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+/* ========================================================================================================
+   MEDIA QUERIES
+=========================================================================================================== */
+@media (max-width: 768px) {
+    .zip-download-group {
+        width: 100%;
+    }
+}

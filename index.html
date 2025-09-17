@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Primary Meta Tags -->
+    <title>HTML Extractor</title>
+    <meta name="title" content="HTML Extractor">
+    <meta name="description" content="Tool to extract CSS and JavaScript code blocks from an HTML file. Clean up your HTML by separating styles and scripts into external files and download them as a ZIP.">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="HTML Extractor">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://htmlextractor.ct.ws/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://htmlextractor.ct.ws/">
+    <meta property="og:title" content="HTML Extractor - Separate CSS &amp; JS from HTML">
+    <meta property="og:description" content="Tool to extract CSS (&lt;style&gt;) and JavaScript (&lt;script&gt;) code blocks from an HTML file into separate, downloadable files.">
+    <meta property="og:image" content="https://htmlextractor.ct.ws/images/share-image.png">
+    <meta property="og:site_name" content="HTML Extractor">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://htmlextractor.ct.ws/">
+    <meta name="twitter:title" content="HTML Extractor - Separate CSS &amp; JS from HTML">
+    <meta name="twitter:description" content="Easily clean your HTML by extracting &lt;style&gt; and &lt;script&gt; blocks into external files with our free online tool.">
+    <meta name="twitter:image" content="https://htmlextractor.ct.ws/images/share-image.png">
+    <meta name="twitter:site" content="@Devilquest666">
+
+    <!-- Additional / Optional -->
+    <meta name="theme-color" content="#1a1a1a">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+
+    <!-- Favicon -->
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="https://toolboxhub.ct.ws/cdn/styles/common-styles.css?v=29300846">
+    <link rel="stylesheet" href="styles/style.css">
+
+    <!-- Scripts -->
+    <script src="https://toolboxhub.ct.ws/cdn/scripts/common-scripts.js?v=29300846" defer></script>
+    <script src="scripts/main.js" defer></script>
+
+<body>
+    <div class="page-wrapper">
+        <div class="content-wrapper">
+            <header>
+                <a href="https://toolboxhub.ct.ws" class="back-to-hub">
+                    <span class="back-arrow">←</span>
+                    <span class="back-text"> Back to Hub</span>
+                </a>
+                <h1>
+                    <img src="images/logo.png" alt="">
+                    HTML Extractor
+                </h1>
+                <p>Separate styles and scripts blocks from your HTML</p>
+            </header>
+
+            <main>
+                <div id="inputContainer">
+                    <div class="input-area">
+                        <div class="upload-area" id="uploadArea">
+                            <div class="upload-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M14 4.5V11h-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5zm-9.736 7.35v3.999h-.791v-1.714H1.79v1.714H1V11.85h.791v1.626h1.682V11.85h.79Zm2.251.662v3.337h-.794v-3.337H4.588v-.662h3.064v.662zm2.176 3.337v-2.66h.038l.952 2.159h.516l.946-2.16h.038v2.661h.715V11.85h-.8l-1.14 2.596H9.93L8.79 11.85h-.805v3.999zm4.71-.674h1.696v.674H12.61V11.85h.79v3.325Z" />
+                                </svg>
+                            </div>
+                            <div class="upload-text">Drop an HTML file here</div>
+                            <div class="upload-subtext">or click to browse</div>
+                            <input type="file" class="d-none" id="fileInput" accept=".html,.htm">
+                        </div>
+                        <div class="mt-10 paste-area-container">
+                            <label for="pasteArea" class="paste-label">Or paste your HTML code here:</label>
+                            <textarea id="pasteArea" class="paste-area" placeholder="&lt;html&gt;...&lt;/html&gt;"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="result-container" id="resultsContainer">
+                    <div class="section section-emphasis stats-panel text-center" id="stats"></div>
+
+                    <div class="mt-30 tabs-container">
+                        <button class="tab active" data-tab="html">Cleaned HTML</button>
+                        <button class="tab" data-tab="css">Extracted CSS</button>
+                        <button class="tab" data-tab="js">Extracted JS</button>
+                        <button class="tab" data-tab="preview">Live Preview</button>
+                    </div>
+
+                    <div class="tab-content active" id="html-tab">
+                        <textarea id="htmlOutput" readonly></textarea>
+                        <div class="mt-20 horizontal-line">
+                            <div class="mt-20 label text-start">HTML File Name:</div>
+                            <input type="text" id="htmlFilename" class="mt-10 input-field input-small text-start" value="index.cleaned.html">
+                            <button class="mt-10 btn btn-primary" id="downloadHtmlBtn"><span>💾</span> Download HTML</button>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="css-tab">
+                        <textarea id="cssOutput" readonly=""></textarea>
+                        <div class="mt-20 horizontal-line">
+                            <div class="mt-20 label text-start">CSS File Name:</div>
+                            <input type="text" id="cssFilename" class="mt-10 input-field input-small text-start" value="style.css">
+                            <button class="mt-10 btn btn-primary" id="downloadCssBtn"><span>💾</span> Download CSS</button>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="js-tab">
+                        <textarea id="jsOutput" readonly=""></textarea>
+                        <div class="mt-20 horizontal-line">
+                            <div class="mt-20 label text-start">JavaScript File Name:</div>
+                            <input type="text" id="jsFilename" class="mt-10 input-field input-small text-start" value="main.js">
+                            <button class="mt-10 btn btn-primary" id="downloadJsBtn"><span>💾</span> Download JS</button>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="preview-tab">
+                        <iframe id="preview-frame" title="Live Preview"></iframe>
+                    </div>
+
+                    <div class="mt-30 horizontal-line bottom-controls">
+                        <div class="zip-download-group">
+                            <label class="label" title="If checked, the extracted CSS and JS files will be placed inside 'styles/' and 'scripts/' folders. The links in the HTML file will be updated automatically.">
+                                <input type="checkbox" id="useFoldersCheckbox" checked>
+                                <span>Organize in folders</span>
+                            </label>
+                            <button class="btn btn-primary" id="downloadZipBtn"><span>📦</span> Download All (.zip)</button>
+                        </div>
+                        <button class="btn btn-secondary" id="resetBtn">Reset</button>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <button id="scrollToTopBtn" class="scroll-to-top">^</button>
+    </div>
+    <footer>
+        <p>Made with <span>♥</span> by <a href="https://github.com/Devilquest" target="_blank">Devilquest</a> for those who believe CSS and JS deserve their own place</p>
+    </footer>
+</body>
+
+</html>
