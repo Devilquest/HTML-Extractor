@@ -123,44 +123,63 @@ class HTMLExtractor {
 
         const styleNodes = doc.querySelectorAll('style');
         const scriptNodes = doc.querySelectorAll('script:not([src])');
-
         let cssContent = Array.from(styleNodes)
             .map(node => this.dedent(node.innerHTML))
             .join('\n\n/* --- Next Style Block --- */\n\n');
-        styleNodes.forEach(node => node.remove());
+        styleNodes.forEach(node => {
 
+            if (node.previousSibling && node.previousSibling.nodeType === Node.TEXT_NODE &&
+                node.previousSibling.textContent.match(/^\s*\n\s*$/)) {
+                node.previousSibling.remove();
+            }
+            node.remove();
+        });
         let jsContent = Array.from(scriptNodes)
             .filter(node => node.innerHTML.trim())
             .map(node => this.dedent(node.innerHTML))
             .join('\n\n// --- Next Script Block ---\n\n');
-        scriptNodes.forEach(node => node.remove());
+        scriptNodes.forEach(node => {
 
+            if (node.previousSibling && node.previousSibling.nodeType === Node.TEXT_NODE &&
+                node.previousSibling.textContent.match(/^\s*\n\s*$/)) {
+                node.previousSibling.remove();
+            }
+            node.remove();
+        });
         this.extracted.css = cssContent.trim();
         this.extracted.js = jsContent.trim();
 
-        const useFolders = this.elements.useFoldersCheckbox.checked;
-        const cssFilename = this.elements.cssFilename.value;
-        const jsFilename = this.elements.jsFilename.value;
-
-        const cssLinkHref = useFolders ? `styles/${cssFilename}` : cssFilename;
-        const jsScriptSrc = useFolders ? `scripts/${jsFilename}` : jsFilename;
-
-        if (this.extracted.css) {
-            const link = doc.createElement('link');
-            link.setAttribute('rel', 'stylesheet');
-            link.setAttribute('href', cssLinkHref);
-            doc.head.appendChild(link);
-        }
-
-        if (this.extracted.js) {
-            const script = doc.createElement('script');
-            script.setAttribute('src', jsScriptSrc);
-            script.setAttribute('defer', '');
-            doc.body.appendChild(script);
-        }
-
         const hasDoctype = htmlString.trim().toLowerCase().startsWith('<!doctype html');
-        this.extracted.html = (hasDoctype ? '<!DOCTYPE html>\n' : '') + doc.documentElement.outerHTML;
+        let cleanedHtml = (hasDoctype ? '<!DOCTYPE html>\n' : '') + doc.documentElement.outerHTML;
+
+        const useFolders = this.elements.useFoldersCheckbox.checked;
+        if (this.extracted.css) {
+            const cssFilename = this.elements.cssFilename.value;
+            const cssLinkHref = useFolders ? `styles/${cssFilename}` : cssFilename;
+            const linkTag = `<link rel="stylesheet" href="${cssLinkHref}">`;
+            const comment = `<!-- Extracted Style -->`;
+            cleanedHtml = cleanedHtml.replace(/(\s*)<\/head>/i, (match, whitespace) => {
+                const lastNewline = whitespace.lastIndexOf('\n');
+                const indent = lastNewline > -1 ? whitespace.substring(lastNewline + 1) : whitespace;
+                const childIndent = indent + '    ';
+                return `\n${childIndent}\n${childIndent}${comment}\n${childIndent}${linkTag}\n${indent}</head>`;
+            });
+        }
+        if (this.extracted.js) {
+            const jsFilename = this.elements.jsFilename.value;
+            const jsScriptSrc = useFolders ? `scripts/${jsFilename}` : jsFilename;
+            const scriptTag = `<script src="${jsScriptSrc}" defer=""><\/script>`;
+            const comment = `<!-- Extracted Script -->`;
+            cleanedHtml = cleanedHtml.replace(/(\s*)<\/body>/i, (match, whitespace) => {
+                const lastNewline = whitespace.lastIndexOf('\n');
+                const indent = lastNewline > -1 ? whitespace.substring(lastNewline + 1) : whitespace;
+                const childIndent = indent + '    ';
+                return `\n${childIndent}\n${childIndent}${comment}\n${childIndent}${scriptTag}\n${indent}</body>`;
+            });
+        }
+
+        cleanedHtml = cleanedHtml.replace(/<\/body>(\s*)<\/html>/i, '</body>\n</html>');
+        this.extracted.html = cleanedHtml;
 
         this.displayResults({
             styleBlocks: styleNodes.length,
